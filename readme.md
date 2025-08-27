@@ -1,6 +1,6 @@
 # Malody 到 Phigros 谱面转换器
 这是一个将 Malody 谱面转换为 Phigros 格式的网页工具。
-
+网页版url：https://neve0616.github.io/tools/Convert_chart/
 ## 功能特点
 
 - 支持将 Malody 的 **.mc** 谱面文件转换为 RPE 的 **.json**格式
