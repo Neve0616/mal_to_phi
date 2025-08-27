@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Malody 到 Phigros 谱面转换器</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    </head>
+    
+<body>
+    <header>
+        <h1>Malody 到 Phigros 谱面转换器</h1>
+        <div class="subtitle">网页版 v0.1 - 由 <a href="https://space.bilibili.com/498761895">Aria</a> 制作</div>
+
+    </header>
+
+    <div class="debug-switch">
+        <span class="debug-label">调试模式</span>
+        <label class="switch">
+            <input type="checkbox" id="debug-mode">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <section id="file-section" class="visible">
+        <h2>文件选择</h2>
+            <div class="form-group">
+                <label for="mld-chart">Malody 谱面文件 (.mc)</label>
+                <input type="file" id="mld-chart" accept=".mc">
+                <div class="file-info" id="mld-chart-info">未选择文件</div>
+            </div>
+            <div class="form-group">
+                <label for="music-file">音乐文件 (.mp3/.ogg)</label>
+                <input type="file" id="music-file" accept=".mp3,.ogg,audio/*">
+                <div class="file-info" id="music-file-info">未选择文件</div>
+                <div class="file-preview" id="music-preview"></div>
+            </div>
+            <div class="form-group">
+                <label for="picture-file">图片文件 (.jpg/.png)</label>
+                <input type="file" id="picture-file" accept=".jpg,.jpeg,.png,image/*">
+                <div class="file-info" id="picture-file-info">未选择文件</div>
+                <div class="file-preview" id="image-preview"></div>
+            </div>
+    </section>
+    
+    <section id="info-section">
+        <h2>谱面信息</h2>
+        
+        <div class="information" id="chart-info">
+            请选择.mc文件以显示谱面信息
+        </div>
+        
+        <div class="form-group">
+            <label for="level">等级提示</label>
+            <input type="text" id="level" value="Unknown">
+        </div>
+        
+        <div class="form-group">
+            <label for="illustrator">曲绘作者</label>
+            <input type="text" id="illustrator" value="Unknown">
+        </div>
+    </section>
+    
+    <section id="settings-section">
+        <h2>转换设置</h2>
+        
+        <div class="form-group">
+            <label for="speedToggle">启用加速</label>
+            <input type="checkbox" id="speedToggle">
+        </div>
+
+        <div class="form-group">
+            <label for="Trimmer">谱面加速</label>
+            <input type="number" id="Trimmer" value="1" step="0.05" min="0.5" max="2">
+        </div>
+
+        <div class="form-group">
+            <label for="base-speed">基础流速</label>
+            <input type="number" id="base-speed" value="11.0" step="0.1">
+        </div>
+        
+        <div class="form-group">
+            <label for="y-offest">判定线y轴位置</label>
+            <input type="number" id="y-offest" value="-350.0" step="1.0">
+        </div>
+        
+        <div class="form-group">
+            <label for="alpha">线透明度 (0-255)</label>
+            <input type="number" id="alpha" value="255" min="0" max="255">
+        </div>
+        
+        <div class="form-group">
+            <label for="x-offest">判定线x轴位置</label>
+            <input type="number" id="x-offest" value="0.0" step="0.1">
+        </div>
+
+        <div class="form-group">
+            <label for="offest">偏移值</label>
+            <input type="number" id="offest" value="0" step="1">
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="const" checked>
+            <label for="const">CONST (恒定速度)</label>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="luck">
+            <label for="luck">LUCK (随机轨道)</label>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="flip">
+            <label for="flip">FLIP (镜像)</label>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="rpe_mode">
+            <label for="rpe_mode">生成rpe格式(.pez)</label>
+        </div>
+        
+        
+        
+        <h2 style="margin-top: 30px;">轨道设置</h2>
+        
+        <div class="tabs">
+            <div class="tab" data-keycount="1">1K</div>
+            <div class="tab" data-keycount="2">2K</div>
+            <div class="tab" data-keycount="3">3K</div>
+            <div class="tab active" data-keycount="4">4K</div>
+            <div class="tab" data-keycount="5">5K</div>
+            <div class="tab" data-keycount="6">6K</div>
+            <div class="tab" data-keycount="7">7K</div>
+            <div class="tab" data-keycount="8">8K</div>
+            <div class="tab" data-keycount="9">9K</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="track-dist">轨道间隔</label>
+            <input type="number" id="track-dist" value="260.0" step="1.0">
+        </div>
+        
+        <div class="track-controls" id="track-controls">
+            <!-- 轨道输入框将动态生成 -->
+            <div class="track-item">
+                <label for="track1">轨道 1</label>
+                <input type="number" id="track1" value="-390.0" step="1.0">
+            </div>
+            
+            <div class="track-item">
+                <label for="track2">轨道 2</label>
+                <input type="number" id="track2" value="-130.0" step="1.0">
+            </div>
+            
+            <div class="track-item">
+                <label for="track3">轨道 3</label>
+                <input type="number" id="track3" value="130.0" step="1.0">
+            </div>
+            
+            <div class="track-item">
+                <label for="track4">轨道 4</label>
+                <input type="number" id="track4" value="390.0" step="1.0">
+            </div>
+        </div>
+    </section>
+
+<section id="download-section">
+    <button class="generate-btn">生成 Phigros 谱面</button>
+</section>
+
+    <div class="warning" id="warning-label"></div>
+
+    <footer>
+        <p>© 2025 Aria | 反馈建议: <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=5_4sx10mw2ObLSejYVCXbzOvektGqPxg&authKey=tAQNaX5NtkMsVYbnvx5uRonu5GHMFFUdic%2FLSuBtXPS6fHGMKbFXmaXlYCaYL5C1&noverify=0&group_code=1057872793">点击这里</a></p>
+        <p>开发赞助: <a href="https://afdian.com/a/Aria0616">爱发电</a></p>
+    </footer>
+    <script src="javascript.js"></script>
+</body>
+</html>
